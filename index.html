@@ -365,7 +365,7 @@
       R4: { state: 4, title: 'Arranque correcto', copy: 'Confirmaste que hay corriente, el equipo enciende y muestra imagen.', rec: 'No se observa una falla dentro de estas cuatro reglas.', tone: 'good', speech: 'La regla R4 coincide. El arranque está correcto.' }
     };
     const ruleOrder = Object.keys(ruleDefinitions);
-    const prologBase = (new URLSearchParams(window.location.search).get('prolog') || 'http://localhost:8080').replace(/\/+$/, '');
+    const prologBase = (new URLSearchParams(window.location.search).get('prolog') || 'http://127.0.0.1:8080').replace(/\/+$/, '');
     const prologEndpoint = `${prologBase}/api/diagnostico`;
     const prologHealthEndpoint = `${prologBase}/api/estado`;
     const appState = { answers: { R1: null, R2: null, R3: null, R4: null }, activeTab: 'forward', analyzed: false, prolog: { connected: false, last: null } };
@@ -404,7 +404,7 @@
         appState.prolog.connected = true;
         setPrologStatus('connected', 'Prolog conectado');
         $('#prologSummary').textContent = 'Conectado a SWI-Prolog. Las consultas se resolverán con el predicado diagnostico/6.';
-        $('#prologLastCall').textContent = 'Servidor listo en localhost:8080.';
+        $('#prologLastCall').textContent = 'Servidor listo en 127.0.0.1:8080.';
         log('Prolog conectado.', data.engine || 'SWI-Prolog');
         return true;
       } catch (error) {
