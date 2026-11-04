@@ -206,6 +206,28 @@
     .log-row { display: grid; grid-template-columns: 75px 1fr; gap: 10px; color: var(--muted); font: .72rem/1.4 "SFMono-Regular", Consolas, monospace; }
     .log-row time { color: var(--cyan-dark); }
     .log-row strong { color: var(--ink); }
+    .prolog-card { grid-column: 1 / -1; border-top: 4px solid var(--purple); }
+    .prolog-status { display: inline-flex; align-items: center; gap: 7px; }
+    .prolog-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+    .prolog-status-dot.connected { background: var(--green); box-shadow: 0 0 0 3px rgba(30,154,104,.12); }
+    .prolog-status-dot.error { background: var(--red); }
+    .prolog-grid { display: grid; grid-template-columns: minmax(210px, .72fr) minmax(0, 1.28fr); gap: 15px; }
+    .prolog-summary, .prolog-output { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); }
+    .prolog-summary h3 { margin: 0; font-size: .9rem; }
+    .prolog-summary p { margin: 8px 0 0; color: var(--muted); font-size: .75rem; line-height: 1.5; }
+    .prolog-badges { display: flex; gap: 7px; flex-wrap: wrap; }
+    .prolog-badge { display: inline-flex; align-items: center; min-height: 25px; padding: 4px 8px; border: 1px solid #d7cafb; border-radius: 999px; color: var(--purple); background: #f5f1ff; font: 800 .64rem "SFMono-Regular", Consolas, monospace; }
+    .prolog-badge.engine { color: var(--cyan-dark); border-color: #b9e8ed; background: #eefbfc; }
+    .prolog-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-top: 14px; }
+    .prolog-actions small { color: var(--muted); font-size: .66rem; }
+    .prolog-output-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 8px; }
+    .prolog-output-head strong { font-size: .74rem; }
+    .prolog-output-head code { color: var(--purple); font-size: .64rem; }
+    .prolog-output pre { min-height: 128px; margin: 0; padding: 12px; overflow: auto; border-radius: 9px; color: #2f3152; background: #fff; font: .68rem/1.55 "SFMono-Regular", Consolas, monospace; white-space: pre-wrap; }
+    .prolog-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+    .prolog-fact { padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+    .prolog-fact span { display: block; color: var(--muted); font-size: .64rem; }
+    .prolog-fact strong { display: block; margin-top: 5px; color: var(--cyan-dark); font: 800 .72rem "SFMono-Regular", Consolas, monospace; }
     .footer { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-top: 23px; color: var(--muted); font-size: .7rem; }
     .footer strong { color: var(--ink); }
     .toast { position: fixed; right: 18px; bottom: 18px; max-width: 350px; padding: 12px 14px; border: 1px solid var(--cyan); border-radius: 10px; color: var(--ink); background: #fff; box-shadow: var(--shadow); opacity: 0; transform: translateY(12px); pointer-events: none; transition: .2s ease; font-size: .78rem; }
@@ -214,7 +236,7 @@
     @keyframes mascotFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
     @keyframes mascotTalk { from { transform: translateY(-1px) scale(1); } to { transform: translateY(-3px) scale(1.012, .99); } }
     @media (max-width: 620px) { .intro { display: block; } .intro-note { max-width: 470px; margin-top: 18px; } .workspace { grid-template-columns: 1fr; } .mascot-card { grid-row: auto; } .mascot-wrap { min-height: 300px; } .report-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) { .app { width: min(100% - 20px, 1180px); padding-top: 15px; } .topbar { align-items: flex-start; flex-direction: column; } .top-status { justify-content: flex-start; } .device-row, .engine-grid { grid-template-columns: 1fr; } .usb-row { align-items: flex-start; flex-direction: column; } .usb-actions { justify-content: flex-start; } .case-grid, .facts, .report-grid { grid-template-columns: 1fr; } .state-rail { display: flex; overflow-x: auto; padding-bottom: 5px; } .state-node { min-width: 120px; } }
+    @media (max-width: 560px) { .app { width: min(100% - 20px, 1180px); padding-top: 15px; } .topbar { align-items: flex-start; flex-direction: column; } .top-status { justify-content: flex-start; } .device-row, .engine-grid, .prolog-grid { grid-template-columns: 1fr; } .usb-row { align-items: flex-start; flex-direction: column; } .usb-actions { justify-content: flex-start; } .case-grid, .facts, .report-grid, .prolog-facts { grid-template-columns: 1fr; } .state-rail { display: flex; overflow-x: auto; padding-bottom: 5px; } .state-node { min-width: 120px; } }
   </style>
 </head>
 <body>
@@ -224,7 +246,7 @@
         <img class="brand-logo" src="logo-bmo.png" alt="Logo BMO" />
         <div><div class="brand-name">BMO</div><div class="brand-sub">técnico de arranque</div></div>
       </div>
-      <div class="top-status"><span class="tag live">● casos manuales</span><span class="tag color">BMO técnico</span><span class="tag">4 diagnósticos</span></div>
+      <div class="top-status"><span class="tag live">● casos manuales</span><span class="tag color">BMO técnico</span><span class="tag prolog-status"><i class="prolog-status-dot" id="prologTopDot"></i><span id="prologTopText">Prolog comprobando</span></span></div>
     </header>
 
     <main class="workspace">
@@ -299,6 +321,34 @@
           <p class="state-note" id="stateNote">Estado inicial: falta observar los hechos.</p>
         </div>
       </section>
+
+      <section class="card prolog-card" id="prologCard">
+        <div class="card-head">
+          <div><p class="label">Motor de inferencia</p><h2>Conexión con Prolog</h2></div>
+          <span class="tag prolog-status"><i class="prolog-status-dot" id="prologStatusDot"></i><span id="prologStatusText">Comprobando conexión</span></span>
+        </div>
+        <div class="card-body">
+          <div class="prolog-grid">
+            <div class="prolog-summary">
+              <div class="prolog-badges"><span class="prolog-badge engine">SWI-PROLOG</span><span class="prolog-badge">API HTTP local</span></div>
+              <h3>El diagnóstico se consulta en reglas Prolog</h3>
+              <p id="prologSummary">BMO enviará las cuatro respuestas al predicado <strong>diagnostico/6</strong> cuando pulses «Analizar caso».</p>
+              <div class="prolog-actions"><button class="btn primary" id="checkPrologBtn" type="button">Comprobar conexión</button><small id="prologLastCall">Sin consulta todavía.</small></div>
+            </div>
+            <div class="prolog-output">
+              <div class="prolog-output-head"><strong>Salida generada por Prolog</strong><code id="prologRuleCall">diagnostico/6 · esperando</code></div>
+              <pre id="prologOutput">?- diagnostico(Equipo, Respuestas, Regla, Resultado, Recomendacion, Hora).
+% Esperando la consulta del botón «Analizar caso».</pre>
+            </div>
+          </div>
+          <div class="prolog-facts">
+            <div class="prolog-fact"><span>Regla reconocida</span><strong id="prologRuleValue">R0</strong></div>
+            <div class="prolog-fact"><span>Resultado Prolog</span><strong id="prologResultValue">Esperando</strong></div>
+            <div class="prolog-fact"><span>Equipo consultado</span><strong id="prologDeviceValue">—</strong></div>
+            <div class="prolog-fact"><span>Hora de la consulta</span><strong id="prologTimeValue">—</strong></div>
+          </div>
+        </div>
+      </section>
     </main>
     <footer class="footer"><span><strong>BMO</strong> · técnico de arranque</span><span>Diagnóstico manual basado en cuatro casos de arranque.</span></footer>
   </div>
@@ -315,7 +365,10 @@
       R4: { state: 4, title: 'Arranque correcto', copy: 'Confirmaste que hay corriente, el equipo enciende y muestra imagen.', rec: 'No se observa una falla dentro de estas cuatro reglas.', tone: 'good', speech: 'La regla R4 coincide. El arranque está correcto.' }
     };
     const ruleOrder = Object.keys(ruleDefinitions);
-    const appState = { answers: { R1: null, R2: null, R3: null, R4: null }, activeTab: 'forward', analyzed: false };
+    const prologBase = (new URLSearchParams(window.location.search).get('prolog') || 'http://localhost:8080').replace(/\/+$/, '');
+    const prologEndpoint = `${prologBase}/api/diagnostico`;
+    const prologHealthEndpoint = `${prologBase}/api/estado`;
+    const appState = { answers: { R1: null, R2: null, R3: null, R4: null }, activeTab: 'forward', analyzed: false, prolog: { connected: false, last: null } };
 
     function now() { return new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
     function equipmentName() { return ($('#equipmentName').value || '').trim() || 'Equipo no identificado'; }
@@ -323,6 +376,68 @@
     function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); clearTimeout(window.__toast); window.__toast = setTimeout(() => el.classList.remove('show'), 3200); }
     function answerLabel(value) { return value === 'yes' ? 'SÍ' : value === 'no' ? 'NO' : 'PENDIENTE'; }
     function answerClass(value) { return value === 'yes' ? 'true' : value === 'no' ? 'false' : 'null'; }
+    function prologAtom(value) { return value === 'yes' ? 'si' : value === 'no' ? 'no' : 'pendiente'; }
+    function prologCall() {
+      const answers = ruleOrder.map(rule => `respuesta(${rule.toLowerCase()}, ${prologAtom(appState.answers[rule])})`).join(', ');
+      return `diagnostico(${JSON.stringify(equipmentName())}, [${answers}], Regla, Resultado, Recomendacion, Hora).`;
+    }
+    function setPrologStatus(status, message) {
+      const dots = [$('#prologTopDot'), $('#prologStatusDot')].filter(Boolean);
+      dots.forEach(dot => { dot.className = `prolog-status-dot ${status === 'connected' ? 'connected' : status === 'error' ? 'error' : ''}`; });
+      $('#prologTopText').textContent = message;
+      $('#prologStatusText').textContent = message;
+    }
+    async function requestJson(url, options = {}, timeout = 2200) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+      } finally { clearTimeout(timer); }
+    }
+    async function checkPrologConnection() {
+      setPrologStatus('checking', 'Prolog comprobando');
+      try {
+        const data = await requestJson(prologHealthEndpoint, { headers: { Accept: 'application/json' } });
+        if (!data.connected) throw new Error('El motor no confirmó la conexión.');
+        appState.prolog.connected = true;
+        setPrologStatus('connected', 'Prolog conectado');
+        $('#prologSummary').textContent = 'Conectado a SWI-Prolog. Las consultas se resolverán con el predicado diagnostico/6.';
+        $('#prologLastCall').textContent = 'Servidor listo en localhost:8080.';
+        log('Prolog conectado.', data.engine || 'SWI-Prolog');
+        return true;
+      } catch (error) {
+        appState.prolog.connected = false;
+        setPrologStatus('error', 'Prolog sin conexión');
+        $('#prologSummary').textContent = 'No se encontró el servidor Prolog local. La interfaz mantiene un modo de respaldo para la demostración.';
+        $('#prologLastCall').textContent = 'Inicia bmo_server.pl para conectar el motor real.';
+        log('Prolog no disponible.', error.message);
+        return false;
+      }
+    }
+    function renderPrologFallback(errorMessage = '') {
+      $('#prologRuleCall').textContent = 'diagnostico/6 · respaldo de interfaz';
+      $('#prologOutput').textContent = `?- ${prologCall()}\n% Prolog no respondió.${errorMessage ? `\n% ${errorMessage}` : ''}\n% Se mostró el resultado de respaldo de BMO.`;
+      $('#prologRuleValue').textContent = 'Respaldo';
+      $('#prologResultValue').textContent = 'Reglas JS';
+      $('#prologDeviceValue').textContent = equipmentName();
+      $('#prologTimeValue').textContent = now();
+    }
+    function renderPrologResult(data) {
+      const rule = String(data.rule || 'R0').toUpperCase();
+      const result = data.result || 'Diagnóstico pendiente';
+      const recommendation = data.recommendation || 'Sin recomendación.';
+      const call = data.prolog_call || prologCall();
+      $('#prologRuleCall').textContent = `Regla ${rule} · respuesta de SWI-Prolog`;
+      $('#prologOutput').textContent = `?- ${call}\n\nRegla = ${rule.toLowerCase()}.\nResultado = '${result}'.\nRecomendacion = '${recommendation}'.\nHora = '${data.time || now()}'.`;
+      $('#prologRuleValue').textContent = rule;
+      $('#prologResultValue').textContent = result;
+      $('#prologDeviceValue').textContent = data.equipment || equipmentName();
+      $('#prologTimeValue').textContent = data.time || now();
+      $('#prologSummary').textContent = `SWI-Prolog reconoció ${rule} y devolvió una recomendación para ${data.equipment || equipmentName()}.`;
+      $('#prologLastCall').textContent = `Última consulta: ${data.time || now()}.`;
+    }
     function updateAnswerUI() {
       let answered = 0;
       ruleOrder.forEach(rule => {
@@ -393,9 +508,8 @@
       renderState(waiting);
     }
 
-    function diagnose() {
+    function renderDiagnosis(diagnosis) {
       appState.analyzed = true;
-      const diagnosis = getDiagnosis(appState.answers);
       $('#ruleCode').textContent = `${diagnosis.rule} / ${diagnosis.rule === 'R0' ? 'pendiente' : diagnosis.rule === 'REVISAR' ? 'revisar' : 'reconocida'}`;
       $('#stateCode').textContent = `S${diagnosis.state} / ${diagnosis.state === 0 ? 'inicial' : 'estado ' + diagnosis.state}`;
       $('#diagnosis-title').textContent = diagnosis.title; $('#diagnosisCopy').textContent = diagnosis.copy; $('#recommendationText').textContent = diagnosis.rec;
@@ -403,16 +517,59 @@
       $('#recommendation').className = `result-box ${diagnosis.tone}`; $('#speech').textContent = diagnosis.speech;
       renderState(diagnosis); renderInference(diagnosis);
     }
+    function diagnose() { renderDiagnosis(getDiagnosis(appState.answers)); }
+    function diagnosisFromProlog(data) {
+      const rule = String(data.rule || 'R0').toUpperCase();
+      const definition = ruleDefinitions[rule];
+      return {
+        rule,
+        state: definition ? definition.state : 0,
+        title: data.case || data.result || 'Diagnóstico pendiente',
+        copy: data.result ? `El motor SWI-Prolog devolvió: ${data.result}.` : 'Prolog no encontró una regla concluyente.',
+        rec: data.recommendation || 'Revisa las respuestas y vuelve a analizar el caso.',
+        tone: definition ? definition.tone : 'warn',
+        speech: definition ? `Prolog reconoció ${rule}. ${definition.speech}` : 'Prolog necesita más hechos para cerrar el diagnóstico.'
+      };
+    }
+    async function analyzeCase() {
+      if (!ruleOrder.every(rule => appState.answers[rule])) return;
+      const fallback = getDiagnosis(appState.answers);
+      renderDiagnosis(fallback);
+      $('#prologRuleCall').textContent = 'diagnostico/6 · consultando';
+      $('#prologOutput').textContent = `?- ${prologCall()}\n% Consultando SWI-Prolog...`;
+      $('#prologLastCall').textContent = 'Enviando hechos y reglas al motor Prolog...';
+      try {
+        const data = await requestJson(prologEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ equipment: equipmentName(), answers: Object.fromEntries(ruleOrder.map(rule => [rule.toLowerCase(), appState.answers[rule]])) })
+        }, 5000);
+        appState.prolog.connected = true;
+        setPrologStatus('connected', 'Prolog conectado');
+        renderPrologResult(data);
+        renderDiagnosis(diagnosisFromProlog(data));
+        toast('Caso analizado por Prolog.');
+        log('Caso analizado por Prolog.', `${data.rule || 'R0'} / ${equipmentName()}`);
+      } catch (error) {
+        appState.prolog.connected = false;
+        setPrologStatus('error', 'Prolog sin conexión');
+        renderPrologFallback(error.name === 'AbortError' ? 'Tiempo de espera agotado.' : error.message);
+        toast('Prolog no está disponible: se usó el respaldo local.');
+        log('Se usó el respaldo local.', error.message);
+      }
+      mascot.classList.add('talking'); setTimeout(() => mascot.classList.remove('talking'), 900);
+    }
 
     function answerCase(rule, value) { appState.answers[rule] = value; appState.analyzed = false; updateAnswerUI(); showAwaitingAnalysis(); log('Respuesta manual:', `${rule}=${answerLabel(value)} / ${equipmentName()}`); mascot.classList.add('talking'); setTimeout(() => mascot.classList.remove('talking'), 900); toast(`${rule}: ${answerLabel(value)}`); }
     function clearAnswers() { ruleOrder.forEach(rule => { appState.answers[rule] = null; }); appState.analyzed = false; updateAnswerUI(); showAwaitingAnalysis(); log('Respuestas limpiadas.', equipmentName()); toast('Respuestas reiniciadas.'); }
     $('#equipmentName').addEventListener('input', () => { $('#reportDevice').textContent = equipmentName(); });
     $$('.answer-btn').forEach(btn => btn.addEventListener('click', () => answerCase(btn.dataset.rule, btn.dataset.value)));
     $('#clearBtn').addEventListener('click', clearAnswers);
-    $('#analyzeBtn').addEventListener('click', () => { if (!ruleOrder.every(rule => appState.answers[rule])) return; diagnose(); log('Caso analizado.', `${getDiagnosis(appState.answers).rule} / ${equipmentName()}`); mascot.classList.add('talking'); setTimeout(() => mascot.classList.remove('talking'), 900); toast('Caso analizado correctamente.'); });
+    $('#analyzeBtn').addEventListener('click', analyzeCase);
+    $('#checkPrologBtn').addEventListener('click', checkPrologConnection);
     $$('.tab').forEach(btn => btn.addEventListener('click', () => { $$('.tab').forEach(tab => tab.classList.toggle('active', tab === btn)); appState.activeTab = btn.dataset.tab; appState.analyzed ? diagnose() : showAwaitingAnalysis(); }));
 
-    log('Sistema listo.', 'responde cada caso con sí, no o pendiente'); updateAnswerUI(); showAwaitingAnalysis();
+    log('Sistema listo.', 'responde cada caso con sí, no o pendiente'); updateAnswerUI(); showAwaitingAnalysis(); checkPrologConnection();
   </script>
 </body>
 </html>
