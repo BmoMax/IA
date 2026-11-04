@@ -75,7 +75,7 @@ estado_handler(_Request) :-
 
 diagnostico_handler(Request) :-
     (   memberchk(method(options), Request)
-    ->  cors_enable(Request, [methods([post]), headers([content_type, accept])])
+    ->  preflight_response
     ;   cors_enable,
     http_read_json_dict(Request, Payload),
     payload_to_query(Payload, Equipo, Respuestas),
@@ -102,6 +102,14 @@ diagnostico_handler(Request) :-
         prolog_call: Consulta
     })
     ).
+
+preflight_response :-
+    format('Content-Type: text/plain~n'),
+    format('Access-Control-Allow-Origin: *~n'),
+    format('Access-Control-Allow-Methods: POST, OPTIONS~n'),
+    format('Access-Control-Allow-Headers: Content-Type, Accept~n'),
+    format('Access-Control-Max-Age: 600~n~n'),
+    format('ok~n').
 
 payload_to_query(Payload, Equipo, Respuestas) :-
     get_dict(equipment, Payload, RawEquipo),
