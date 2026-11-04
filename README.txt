@@ -13,6 +13,8 @@ Archivos
 index.html  Aplicación completa (HTML, CSS y JavaScript).
 mascota.png Imagen adjunta usada en la animación.
 logo-bmo.png Logo BMO usado en la interfaz.
+bmo_diagnostico.pl Motor de reglas Prolog con el predicado diagnostico/6.
+bmo_server.pl Servidor HTTP que conecta la interfaz con SWI-Prolog.
 
 Cómo ejecutarlo
 ---------------
@@ -24,6 +26,25 @@ Cómo ejecutarlo
 3. Abre en Chrome o Edge:
 
    http://localhost:8123/index.html
+
+Conexión real con Prolog
+------------------------
+Para que el apartado "Conexión con Prolog" muestre el resultado generado por
+SWI-Prolog, coloca en una misma carpeta index.html, bmo_diagnostico.pl,
+bmo_server.pl, mascota.png y logo-bmo.png. Después ejecuta desde esa carpeta:
+
+   swipl -q -s bmo_server.pl
+
+Abre entonces:
+
+   http://localhost:8080
+
+El botón "Analizar caso" envía las cuatro respuestas al endpoint
+/api/diagnostico. El servidor ejecuta diagnostico/6 y devuelve la regla, el
+resultado, la recomendación y la hora; la interfaz muestra esa salida en el
+apartado "Conexión con Prolog". La web de GitHub Pages sigue funcionando como
+modo de demostración, pero no puede ejecutar SWI-Prolog por sí sola porque es
+un hosting estático.
 
 Uso manual
 ----------
